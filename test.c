@@ -18,7 +18,7 @@ int main () {
    fp2 = fopen("/dev/vsp_dev", "rw");
 
    if(fp2 == NULL){
-      printf("open drirver Error \n");
+      printf("open drirver Error 222 \n");
       fclose(fp);
       return 1;
    }

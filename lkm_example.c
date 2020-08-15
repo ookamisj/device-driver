@@ -24,9 +24,18 @@ static int dev_release(struct inode *, struct file *);
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
 static ssize_t dev_write(struct file *, const char *, size_t, loff_t *);
 
+/* Is the device open right now? Used to prevent 
+ * concurent access into the same device */
+static int Device_Open = 0;
+
 /* This function will be called when user open filesystem device */
 static int dev_open(struct inode *inodep, struct file *filep) {
+	if(Device_Open != 0){
+    	print_db("#ERR: dev busy\n");
+		return -EBUSY;
+	}
     print_db("#INF: dev open\n");
+	Device_Open ++;
     return 0;
 }
 
@@ -48,6 +57,7 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, \
 /* This function will be called when user close filesystem device */
 static int dev_release(struct inode *inodep, struct file *filep) {
     print_db("#INF: dev release\n");
+	Device_Open --;
     return 0;
 }
 
