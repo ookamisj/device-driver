@@ -2,27 +2,29 @@
 #include <string.h>
 
 int main () {
-   FILE *fp;
+   FILE *fp, *fp2;
    char c[] = "this is tutorialspoint";
    char buffer[100];
 
    /* Open file for both reading and writing */
-   fp = fopen("/dev/lkm_example", "rw");
+   fp = fopen("/dev/vsp_dev", "rw");
 
-   /* Read and display data */
-   fread(buffer, strlen(c)+1, 1, fp);
-   printf("%s\n", buffer);
+   if(fp == NULL){
+      printf("open drirver Error \n");
+      return 1;
+   }
 
-   /* Write data to the file */
-   fwrite(c, strlen(c) + 1, 1, fp);
+      /* Open file for both reading and writing */
+   fp2 = fopen("/dev/vsp_dev", "rw");
 
-   /* Seek to the beginning of the file */
-//    fseek(fp, 0, SEEK_SET);
+   if(fp2 == NULL){
+      printf("open drirver Error \n");
+      fclose(fp);
+      return 1;
+   }
 
-   /* Read and display data */
-   fread(buffer, strlen(c)+1, 1, fp);
-   printf("\n%s\n", buffer);
    fclose(fp);
+   fclose(fp2);
    
    return(0);
 }

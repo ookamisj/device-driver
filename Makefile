@@ -8,7 +8,7 @@ clean:
 	rm test
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 
-xtest:
+insdriver:
 # We put a — in front of the rmmod command to tell make to ignore
 # an error in case the module isn’t loaded.
 	-sudo rmmod lkm_example
@@ -18,3 +18,6 @@ xtest:
 	sudo insmod lkm_example.ko
 # Display the kernel log
 	dmesg
+
+rmdriver:
+	-sudo rmmod lkm_example
