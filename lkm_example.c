@@ -5,6 +5,9 @@
 #include <linux/fs.h>             // Header for the Linux file system support
 #include <linux/uaccess.h>
 
+#include "chardev.h"    
+
+
 #define DEBUG_ENA 1
 #if (DEBUG_ENA == 1)
     #define print_db(...) printk(__VA_ARGS__)
@@ -42,7 +45,7 @@ static int dev_open(struct inode *inodep, struct file *filep) {
 /* This function will be called when user read filesystem device */
 static ssize_t dev_read(struct file *filep, char *buffer, size_t len, \
                                                         loff_t *offset) {
-    print_db("#INF: dev read\n");
+    print_db("#INF: device_read(%p,%p,%d)\n", filep, buffer, len);
     return 0;
 }
 
@@ -61,12 +64,37 @@ static int dev_release(struct inode *inodep, struct file *filep) {
     return 0;
 }
 
+
+static long my_ioctl (struct file *file, unsigned int cmd, unsigned long arg)
+{
+	print_db("#ioctl: cmd %d ; arg = %ld \n", cmd, arg);
+
+	switch(cmd) {
+		case IOCTL_GET_MSG:
+			print_db("#ioctl: IOCTL_GET_MSG \n");
+		break;
+		case IOCTL_GET_NTH_BYTE:
+			print_db("#ioctl: IOCTL_GET_NTH_BYTE \n");
+		break;
+		case IOCTL_SET_MSG:
+			print_db("#ioctl: IOCTL_GET_MSG \n");
+		break;
+		default:
+		return -ENOTTY;
+	}
+
+	return 0;
+}
+
+
 static struct file_operations fops =
 {
-   .open = dev_open,
-   .read = dev_read,
-   .write = dev_write,
-   .release = dev_release,
+	.owner      	= THIS_MODULE,
+	.open 			= dev_open,
+	.read			= dev_read,
+	.write 			= dev_write,
+	.release 		= dev_release,
+	.unlocked_ioctl = my_ioctl,
 };
 
 static int __init comp_init(void) {
