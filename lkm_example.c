@@ -5,7 +5,7 @@
 #include <linux/fs.h>             // Header for the Linux file system support
 #include <linux/uaccess.h>
 
-#include "chardev.h"    
+#include "chardev.h"
 
 
 #define DEBUG_ENA 1
@@ -68,16 +68,21 @@ static int dev_release(struct inode *inodep, struct file *filep) {
 static long my_ioctl (struct file *file, unsigned int cmd, unsigned long arg)
 {
 	print_db("#ioctl: cmd %d ; arg = %ld \n", cmd, arg);
+    char mes[100];
+    char *mes_to = "hello guys, i am kernel module";
 
 	switch(cmd) {
 		case IOCTL_GET_MSG:
 			print_db("#ioctl: IOCTL_GET_MSG \n");
+            copy_to_user((char *) arg, mes_to, strlen(mes_to));
 		break;
 		case IOCTL_GET_NTH_BYTE:
 			print_db("#ioctl: IOCTL_GET_NTH_BYTE \n");
 		break;
 		case IOCTL_SET_MSG:
-			print_db("#ioctl: IOCTL_GET_MSG \n");
+            copy_from_user(mes ,(char *) arg, sizeof(mes));
+			print_db("#ioctl: IOCTL_SET_MSG : %s \n", mes);
+
 		break;
 		default:
 		return -ENOTTY;
